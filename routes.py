@@ -22,3 +22,8 @@ def cadastrar():
     db.session.commit()
 
     return redirect("/")
+
+@app.route("/transacoes")
+def listar_transacoes():
+    transacoes = Transacao.query.all()
+    return render_template("lista_transacoes.html", transacoes=transacoes)
