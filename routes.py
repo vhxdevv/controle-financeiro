@@ -1,4 +1,4 @@
-from flask import render_template, redirect, request
+from flask import render_template, redirect, request, url_for
 from extensions import db
 from main import app
 from models import Transacao
@@ -27,3 +27,10 @@ def cadastrar():
 def listar_transacoes():
     transacoes = Transacao.query.all()
     return render_template("lista_transacoes.html", transacoes=transacoes)
+
+@app.route("/deletar/<int:id>")
+def deletar(id):
+    transacao = Transacao.query.get_or_404(id)
+    db.session.delete(transacao)
+    db.session.commit()
+    return redirect(url_for('listar_transacoes'))
