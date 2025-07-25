@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Transação</title>
+</head>
+<body>
+<h2>Editar Transação</h2>
+
+<form action="{{ url_for('atualizar_transacao', id=transacao.id) }}" method="POST">
+  <label>Descrição:</label>
+  <input type="text" name="descricao" value="{{ transacao.descricao }}">
+
+  <label>Valor:</label>
+  <input type="number" step="0.01" name="valor" value="{{ transacao.valor }}">
+
+  <label>Tipo:</label>
+  <select name="tipo">
+    <option value="entrada" {% if transacao.tipo == 'entrada' %}selected{% endif %}>Entrada</option>
+    <option value="saida" {% if transacao.tipo == 'saida' %}selected{% endif %}>Gasto</option>
+  </select>
+
+  <label>Categoria:</label>
+  <select name="categoria">
+    <option value="Alimentação" {% if transacao.categoria == 'Alimentação' %}selected{% endif %}>Alimentação</option>
+    <option value="Transporte" {% if transacao.categoria == 'Transporte' %}selected{% endif %}>Transporte</option>
+    <option value="Lazer" {% if transacao.categoria == 'Lazer' %}selected{% endif %}>Lazer</option>
+    <option value="Moradia" {% if transacao.categoria == 'Moradia' %}selected{% endif %}>Moradia</option>
+    <option value="Outros" {% if transacao.categoria == 'Outros' %}selected{% endif %}>Outros</option>
+  </select>
+
+  <button type="submit">Atualizar</button>
+</form>
+
+</body>
+</html>

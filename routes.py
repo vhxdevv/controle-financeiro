@@ -34,3 +34,22 @@ def deletar(id):
     db.session.delete(transacao)
     db.session.commit()
     return redirect(url_for('listar_transacoes'))
+
+@app.route("/editar_transacao/<int:id>", methods=['GET'])
+def editar_transacao(id):
+    transacao = Transacao.query.get_or_404(id)
+    return render_template("editar_transacao.html", transacao=transacao)
+
+@app.route('/atualizar_transacao/<int:id>', methods=['POST'])
+def atualizar_transacao(id):
+    transacao = Transacao.query.get_or_404(id)
+
+    # Atualiza os dados
+    transacao.valor = request.form['valor']
+    transacao.tipo = request.form['tipo']
+    transacao.categoria = request.form['categoria']
+    transacao.descricao = request.form['descricao']
+
+    db.session.commit()
+
+    return redirect("/transacoes")

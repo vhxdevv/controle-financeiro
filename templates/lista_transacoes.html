@@ -12,6 +12,7 @@
                 <strong>{{ transacao.nome }}</strong> - R$ {{ transacao.valor }} -
                 {{ transacao.data.strftime('%d/%m/%Y') }} - {{ transacao.categoria }}
                 <a href="/deletar/{{ transacao.id }}" style="color:red">[Excluir]</a>
+                <a href="{{ url_for('editar_transacao', id=transacao.id) }}">Editar</a>
             </li>
         {% endfor %}
     </ul>
