@@ -6,16 +6,30 @@
 </head>
 <body>
     <h1>Minhas Transações</h1>
-    <ul>
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Descrição</th>
+            <th>Valor (R$)</th>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Categoria</th>
+            <th>Ações</th>
+        </tr>
         {% for transacao in transacoes %}
-            <li>
-                <strong>{{ transacao.descricao }}</strong> - R$ {{ transacao.valor }} -
-                {{ transacao.data.strftime('%d/%m/%Y') }} - {{ transacao.categoria }}
+        <tr>
+            <td>{{ transacao.descricao }}</td>
+            <td>{{ transacao.valor }}</td>
+            <td>{{ transacao.data.strftime('%d/%m/%Y') }}</td>
+            <td>{{ transacao.tipo }}</td>
+            <td>{{ transacao.categoria }}</td>
+            <td>
                 <a href="/deletar/{{ transacao.id }}" style="color:red">[Excluir]</a>
                 <a href="{{ url_for('editar_transacao', id=transacao.id) }}">Editar</a>
-            </li>
+            </td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
+
 
     <a href="/">Voltar para Home</a>
 </body>

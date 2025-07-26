@@ -52,4 +52,4 @@ def atualizar_transacao(id):
 
     db.session.commit()
 
-    return redirect("/transacoes")
+    return redirect("/transacoes") 

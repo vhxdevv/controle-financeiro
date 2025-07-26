@@ -17,7 +17,7 @@
   <label>Tipo:</label>
   <select name="tipo">
     <option value="entrada" {% if transacao.tipo == 'entrada' %}selected{% endif %}>Entrada</option>
-    <option value="saida" {% if transacao.tipo == 'saida' %}selected{% endif %}>Gasto</option>
+    <option value="gasto" {% if transacao.tipo == 'gasto' %}selected{% endif %}>Gasto</option>
   </select>
 
   <label>Categoria:</label>
