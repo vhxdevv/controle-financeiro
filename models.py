@@ -4,6 +4,8 @@ from datetime import datetime
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    #nome = db.Column(db.String(50))
+    #depois colocar nome do usuario para aparecer após o login
     email = db.Column(db.String(100), unique=True, nullable=False)
     senha = db.Column(db.String(100), nullable=False)
     transacoes = db.relationship('Transacao', backref="user", lazy=True)
