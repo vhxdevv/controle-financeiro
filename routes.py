@@ -52,4 +52,13 @@ def atualizar_transacao(id):
 
     db.session.commit()
 
-    return redirect("/transacoes") 
+    return redirect("/transacoes")
+
+@app.route("/login", methods=["GET"])
+def login():
+    return render_template("login.html")
+
+
+@app.route("/registro", methods=["GET"])
+def registro_usuario():
+    return render_template("registro.html")
