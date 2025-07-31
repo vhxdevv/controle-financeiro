@@ -5,6 +5,8 @@ import os
 
 app = Flask(__name__)
 
+app.secret_key = "vh123"
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///financas.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

@@ -1,7 +1,9 @@
 from flask import render_template, redirect, request, url_for
 from extensions import db
 from main import app
-from models import Transacao
+from models import Transacao, User
+from users import verificador_user
+from flask import flash
 
 #rotas
 
@@ -54,11 +56,24 @@ def atualizar_transacao(id):
 
     return redirect("/transacoes")
 
-@app.route("/login", methods=["GET"])
-def login():
+@app.route("/tela_login")
+def tela_login():
     return render_template("login.html")
 
+@app.route("/registro", methods=["POST", "GET"])
+def registro():
+    if request.method == "POST":
+        email = request.form["email"]
+        senha = request.form["senha"]
 
-@app.route("/registro", methods=["GET"])
-def registro_usuario():
+        if verificador_user(email):
+            flash("O usuario ja existe!", "erro")
+
+        else:
+            novo_user = User(email=email, senha=senha)
+            db.session.add(novo_user)
+            db.session.commit()
+            flash("Cadastro feito com sucesso!", "sucesso")
+            return redirect(url_for("tela_login"))
+
     return render_template("registro.html")
