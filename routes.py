@@ -3,47 +3,77 @@ from extensions import db
 from main import app
 from models import Transacao, User
 from users import verificador_user
-from flask import flash
+from flask import flash, session
 
 #rotas
 
 @app.route("/")
 def homepage():
-    return render_template("homepage.html")
+    return redirect("/tela_login")
 
-@app.route("/cadastrar", methods=['POST'])
+@app.route("/cadastrar", methods=['POST', "GET"])
 def cadastrar():
-    descricao = request.form["descricao"]
-    valor = float(request.form["valor"])
-    tipo = request.form["tipo"]
-    categoria = request.form['categoria']
-    user_id = 1
+    if "user_id" not in session:
+        flash("Você precisa estar logado para cadastrar uma transação.")
+        return redirect("/tela_login")
 
-    nova_transacao = Transacao(descricao=descricao, valor=valor,categoria=categoria, tipo=tipo, user_id=1) #user id temporario
-    db.session.add(nova_transacao)
-    db.session.commit()
+    if request.method == "POST":
+        descricao = request.form["descricao"]
+        valor = float(request.form["valor"])
+        tipo = request.form["tipo"]
+        categoria = request.form['categoria']
+        user_id = session["user_id"]
 
-    return redirect("/")
+        nova_transacao = Transacao(descricao=descricao, valor=valor,categoria=categoria, tipo=tipo, user_id=user_id)
+        db.session.add(nova_transacao)
+        db.session.commit()
+
+        return redirect("/cadastrar")
+    
+    return render_template("homepage.html")
 
 @app.route("/transacoes")
 def listar_transacoes():
-    transacoes = Transacao.query.all()
+    if "user_id" not in session:
+        flash("Faça login para acessar suas transações.")
+        return redirect("/tela_login")
+
+    user_id = session["user_id"]
+    transacoes = Transacao.query.filter_by(user_id=user_id).all()
     return render_template("lista_transacoes.html", transacoes=transacoes)
 
 @app.route("/deletar/<int:id>")
 def deletar(id):
+    if "user_id" not in session:
+        flash("Você precisa estar logado para deletar uma transação.")
+        return redirect("/tela_login")
+    
     transacao = Transacao.query.get_or_404(id)
+
     db.session.delete(transacao)
     db.session.commit()
     return redirect(url_for('listar_transacoes'))
 
 @app.route("/editar_transacao/<int:id>", methods=['GET'])
 def editar_transacao(id):
+    if "user_id" not in session:
+        flash("Você precisa estar logado para editar uma transação.")
+        return redirect("/tela_login")
+    
     transacao = Transacao.query.get_or_404(id)
+
+    if transacao.user_id != session["user_id"]:
+        flash("Essa transação não é sua.")
+        return redirect("/transacoes")
+    
     return render_template("editar_transacao.html", transacao=transacao)
 
 @app.route('/atualizar_transacao/<int:id>', methods=['POST'])
 def atualizar_transacao(id):
+    if "user_id" not in session:
+        flash("Você precisa estar logado para atualizar uma transação.")
+        return redirect("/tela_login")
+    
     transacao = Transacao.query.get_or_404(id)
 
     # Atualiza os dados
@@ -56,8 +86,27 @@ def atualizar_transacao(id):
 
     return redirect("/transacoes")
 
-@app.route("/tela_login")
+@app.route("/tela_login", methods=["POST", "GET"])
 def tela_login():
+    if request.method == "POST":
+        email = request.form["email"]
+        senha = request.form["senha"]
+
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            flash("Usuário não encontrado!")
+            return redirect("/tela_login")
+    
+        elif user.senha != senha:
+            flash("Senha incorreta!")
+            return redirect("/tela_login")
+    
+        else:
+            session["user_id"] = user.id
+            flash("Login realizado com sucesso!")
+            return redirect("/cadastrar")
+
     return render_template("login.html")
 
 @app.route("/registro", methods=["POST", "GET"])
@@ -77,3 +126,9 @@ def registro():
             return redirect(url_for("tela_login"))
 
     return render_template("registro.html")
+
+@app.route("/logout")
+def logout():
+    session.pop("user_id", None)
+    flash("Você saiu da sua conta.")
+    return redirect("/tela_login")
