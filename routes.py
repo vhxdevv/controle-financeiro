@@ -40,7 +40,41 @@ def listar_transacoes():
 
     user_id = session["user_id"]
     transacoes = Transacao.query.filter_by(user_id=user_id).all()
-    return render_template("lista_transacoes.html", transacoes=transacoes)
+    variavel_teste = 1
+
+    nomes_gastos = [t.descricao for t in transacoes if t.tipo == "gasto"]
+    valores_gastos = [t.valor for t in transacoes if t.tipo == "gasto"]
+
+    nomes_entradas = [t.descricao for t in transacoes if t.tipo == "entrada"]
+    valores_entradas = [t.valor for t in transacoes if t.tipo == "entrada"]
+
+    return render_template("lista_transacoes.html", transacoes=transacoes, nomes_gastos=nomes_gastos,
+                           valores_gastos=valores_gastos,
+                           nomes_entradas=nomes_entradas,
+                           valores_entradas=valores_entradas,
+                           variavel_teste=variavel_teste)
+
+
+#@app.route("/grafico")
+#def grafico():
+    if "user_id" not in session:
+        flash("Faça login para acessar.")
+        return redirect("/tela_login")
+
+    user_id = session["user_id"]
+    transacoes = Transacao.query.filter_by(user_id=user_id).all()
+
+    nomes_gastos = [t.descricao for t in transacoes if t.tipo == "gasto"]
+    valores_gastos = [t.valor for t in transacoes if t.tipo == "gasto"]
+
+    nomes_entradas = [t.descricao for t in transacoes if t.tipo == "entrada"]
+    valores_entradas = [t.valor for t in transacoes if t.tipo == "entrada"]
+
+    return render_template("lista_transacoes.html",
+                           nomes_gastos=nomes_gastos,
+                           valores_gastos=valores_gastos,
+                           nomes_entradas=nomes_entradas,
+                           valores_entradas=valores_entradas)
 
 @app.route("/deletar/<int:id>")
 def deletar(id):
