@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista de Transações</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <h1>Minhas Transações</h1>
@@ -33,52 +31,64 @@
     </table>
 <a href="/cadastrar">Voltar para Home</a>
 
-    <h1>Resumo das suas transações</h1>
+<div class="container mx-auto px-4 pb-8">
+        <!-- Cards de Resumo -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Total de Entradas -->
+            <div class="stats-card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total de Entradas</p>
+                        <p class="text-3xl font-bold text-green-600" id="totalEntradas">R$ 0,00</p>
+                    </div>
+                </div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+            </div>
+        </div>
+</div>
 
-        <h2>Distribuição dos Gastos</h2>
-        <canvas id="graficoPizza" width="400" height="400"></canvas>
+<!-- Total de Gastos -->
+            <div class="stats-card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total de Gastos</p>
+                        <p class="text-3xl font-bold text-red-600" id="totalGastos">R$ 0,00</p>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                    </div>
+                </div>
+            </div>
 
-        <h2>Entradas vs Saídas</h2>
-        <canvas id="graficoBarras" width="400" height="400"></canvas>
+<!-- Saldo Atual -->
+            <div class="stats-card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Saldo Atual</p>
+                        <p class="text-3xl font-bold" id="saldoAtual">R$ 0,00</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <script>
-        let nomes_gastos = {{ nomes_gastos | tojson | safe }};
-        let valores_gastos = {{ valores_gastos | tojson | safe }};
-        let nomes_entradas = {{ nomes_entradas | tojson | safe }};
-        let valores_entradas = {{ valores_entradas | tojson | safe }};
+<script>
+    let totalEntradas = { total_entradas , tojson , safe };
+    let totalGastos = { total_gastos , tojson , safe };
+    let nomesGastos = { nomes_gastos , tojson , safe };
+    let valoresGastos = { valores_gastos , tojson , safe };
 
-        console.log("Nomes gastos:", nomesGastos);
-        console.log("Valores gastos:", valoresGastos);
+    let saldoAtual = totalEntradas - totalGastos
 
-         new Chart(document.getElementById('graficoPizza'), {
-            type: 'pie', // tipo do gráfico
-            data: {
-                labels: nomes_gastos, // nomes/descrição dos gastos
-                datasets: [{
-                    label: 'Gastos',
-                    data: valores_gastos, // valores dos gastos
-                    backgroundColor: ['#ff4d4d', '#ff944d', '#ffff4d', '#94ff4d', '#4dff4d', '#4dffff', '#4d4dff', '#ff4dff']
-                }]
-            }
-        });
+    document.getElementById('totalEntradas').textContent = `R$ ${totalEntradas.toFixed(2).replace('.', ',')}`;
+    document.getElementById('totalGastos').textContent = `R$ ${totalGastos.toFixed(2).replace('.', ',')}`;
+    document.getElementById('saldoAtual').textContent = `R$ ${saldoAtual.toFixed(2).replace('.', ',')}`;
 
-        // ================================
-        // GRÁFICO DE BARRAS (ENTRADA VS SAÍDA)
-        // ================================
-        new Chart(document.getElementById('graficoBarras'), {
-            type: 'bar', // tipo do gráfico
-            data: {
-                labels: ['Entradas', 'Saídas'], // categorias fixas
-                datasets: [{
-                    label: 'Valor Total',
-                    data: [
-                        valores_entradas.reduce((a, b) => a + b, 0), // soma entradas
-                        valores_gastos.reduce((a, b) => a + b, 0) // soma saídas
-                    ],
-                    backgroundColor: ['#4CAF50', '#F44336']
-                }]
-            }
-        });
-    </script>
+    const saldoElement = document.getElementById('saldoAtual');
+    if (saldoAtual >= 0) {
+        saldoElement.classList.add('text-green-600');
+    } else {
+        saldoElement.classList.add('text-red-600');
+    }
+</script>
 </body>
 </html>

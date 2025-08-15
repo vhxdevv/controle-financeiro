@@ -40,19 +40,15 @@ def listar_transacoes():
 
     user_id = session["user_id"]
     transacoes = Transacao.query.filter_by(user_id=user_id).all()
-    variavel_teste = 1
+
+    total_gastos = sum([t.valor for t in transacoes if t.tipo == "gasto"])
+    total_entradas = sum([t.valor for t in transacoes if t.tipo == "entrada"])
 
     nomes_gastos = [t.descricao for t in transacoes if t.tipo == "gasto"]
     valores_gastos = [t.valor for t in transacoes if t.tipo == "gasto"]
 
-    nomes_entradas = [t.descricao for t in transacoes if t.tipo == "entrada"]
-    valores_entradas = [t.valor for t in transacoes if t.tipo == "entrada"]
-
-    return render_template("lista_transacoes.html", transacoes=transacoes, nomes_gastos=nomes_gastos,
-                           valores_gastos=valores_gastos,
-                           nomes_entradas=nomes_entradas,
-                           valores_entradas=valores_entradas,
-                           variavel_teste=variavel_teste)
+    print("DEBUG -> Entradas:", total_entradas, "Gastos:", total_gastos)
+    return render_template("lista_transacoes.html", transacoes=transacoes, total_gastos=total_gastos, total_entradas=total_entradas, nomes_gastos=nomes_gastos, valores_gastos=valores_gastos)
 
 
 #@app.route("/grafico")
